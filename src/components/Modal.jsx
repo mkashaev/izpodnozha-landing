@@ -2,12 +2,15 @@ import { Fragment, useState, useEffect } from "react"
 import axios from "axios"
 import { Dialog, Transition } from "@headlessui/react"
 import { CheckIcon } from "@heroicons/react/outline"
+import LoadingSvg from "../components/LoadingSvg"
 
 export default function Modal({ open, onSetOpen }) {
   const [value, setValue] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleOnClick = async () => {
     if (!value && value.length === 0) return
+    setLoading(true)
     try {
       await axios.get(
         `https://izpodnozha-req-serv.herokuapp.com/form?form=${value}`
@@ -16,6 +19,7 @@ export default function Modal({ open, onSetOpen }) {
       console.log(err)
     } finally {
       setValue("")
+      setLoading(false)
       onSetOpen(false)
     }
   }
@@ -105,9 +109,11 @@ export default function Modal({ open, onSetOpen }) {
               <div className="mt-5 sm:mt-6">
                 <button
                   type="button"
+                  disabled={loading}
                   className="loading disabled font-sans inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-500 text-base font-medium text-white hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:text-sm"
                   onClick={handleOnClick}
                 >
+                  {loading && <LoadingSvg />}
                   Сообщить о начале доставки
                 </button>
               </div>
